@@ -1,0 +1,10 @@
+
+#Banco de dados de exemplo para se trabalhar no conjunto de dados.
+Cap<-c(8,4,6,4,5,3,2,2,3,2,4,6,3,3,2,3,1,2,1,1,4,2,4,5)
+Mes<-c("01.Janeiro","02.Fevereiro","03.Março","04.Abril","05.Maio","06.Junho","07.Julho","08.Agosto","09.Setembro","10.Outubro","11.Novembro","12.Dezembro","01.Janeiro","02.Fevereiro","03.Março","04.Abril","05.Maio","06.Junho","07.Julho","08.Agosto","09.Setembro","10.Outubro","11.Novembro","12.Dezembro")
+Ano<-c(rep(2017,times=12),rep(2018,time=12))
+tab<-data.frame(Cap,data,Ano)
+#Criando two way table
+table<-xtabs(Cap~Ano+Mes)
+#Criando o Gráfico
+barplot(table,ylab="Frequência de Captura", col=c("darkblue","red"), beside=TRUE,legend = c(2017,2018) , names.arg=c("Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"))
