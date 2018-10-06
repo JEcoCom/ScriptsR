@@ -1,0 +1,2 @@
+#Esse código serve para instalar um pacote no R Baixado a partir do GitHub no formato ZIP
+install("Caminho para a pasta formada pelo arquivo depois de ter sido descompactado")
