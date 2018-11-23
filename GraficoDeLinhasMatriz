@@ -1,0 +1,7 @@
+
+dados<-read.table("dados2.txt", header=T)
+dados$Anos<-as.factor(dados$Ano)
+ggplot(data = dados, aes(x=Ano, y=Risco)) + 
+geom_line(aes(colour=Nome),size=2)+
+scale_y_continuous(name="Classificação de Risco") +
+scale_x_continuous(name="Ano", limits=c(2017,2018),breaks=c(2017,2018))
