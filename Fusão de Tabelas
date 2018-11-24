@@ -4,3 +4,4 @@ A<-read.table("Registro.txt",header=TRUE)
 B<-read.table("Transecto.txt",header=TRUE)
 matriz<-merge(A,B,by.x="TRANSEC",by.y="TRANSEC")
 write.csv(matriz,file="matriz.txt")
+sdvsdvvsdv
