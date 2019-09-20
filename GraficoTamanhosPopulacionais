@@ -1,0 +1,117 @@
+#Lendo a Tabela de Transectos
+#Instalando o Pacote para ler arquivos do excel
+library(readxl)
+#Definindo o diretorio de trabalho
+setwd("N:\\MA - Meio Ambiente\\MANEJO DA FAUNA\\Planilhas\\Transecto")
+#Lendo as abas como tabelas separadas
+Transectos<-read_excel("Transecto.xlsx", sheet="Transecto")
+Registros<-read_excel("Transecto.xlsx", sheet="Registro")
+#Juntadno as duas tabelas para formar a tabela da analise
+dados<-merge(Transectos,Registros,by.x="Transecto", by.y="Transecto")
+
+#Selecionando Transectos para o ultimo período de um ano
+dadosT<-subset(dados,Data>"2018-10-01")
+
+#Identificando os meses dos transectos
+mes<- strftime(dadosT$Data, "%Y-%m")
+
+#Agredados os dados por transecto
+DadosMes<-aggregate(dadosT$Quantidade,by=list(dadosT$UnidadeAmostral,mes,dadosT$Especie),FUN="sum")
+
+#Tirando a média por mês
+media<-aggregate(DadosMes$x,by=list(DadosMes$Group.3,DadosMes$Group.2),FUN="mean")
+
+#Identificando o fator ano
+library(tidyr)
+media2<-separate(data=media,col=Group.2,into=c("Ano","Mes"),sep="-")
+media<-cbind(media2,media$Group.2)
+names(media)<-c("SP","Ano","Mes","QTD","Data")
+
+#Carregando pacote para fazer os gráficos
+library("ggplot2")
+
+##Gráfico Patagioenas picazuro
+#Selecionando a espécie
+d<-media[media$SP=="PP",]
+g1<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Patagioenas picazuro")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+##Gráfico Vanelus chilensis
+#Selecionando a espécie
+d<-media[media$SP=="VC",]
+g2<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Vanelus chilensis")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+##Gráfico Coragyps atratus
+#Selecionando a espécie
+d<-media[media$SP=="CA",]
+g3<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Coragyps atratus")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+##Gráfico Caracara plancus
+#Selecionando a espécie
+d<-media[media$SP=="CP",]
+g4<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Caracara plancus")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+#Gráfico Sirigma sybilatrix
+#Selecionando a espécie
+d<-media[media$SP=="SS",]
+g5<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Sirigma sybilatrix")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+#Gráfico Theristicus caudatus
+#Gráfico Sirigma sybilatrix
+#Selecionando a espécie
+d<-media[media$SP=="TC",]
+g6<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Theristicus caudatus")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+#Gráfico Athene cunicularia
+#Selecionando a espécie
+d<-media[media$SP=="AC",]
+g7<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Athene cunicularia")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+#Gráfico Xolmis cinereus
+#Selecionando a espécie
+d<-media[media$SP=="XC",]
+g8<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+geom_bar(stat="identity")+
+scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_y_continuous("Quantidade")+
+ggtitle("Xolmis cinereus")+
+theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
+
+#Criando o gráfico
+library("gridExtra")
+
+grid.arrange(g1,g2,g3,g4,g5,g6,g7,g8 , ncol=2)
