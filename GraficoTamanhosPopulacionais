@@ -1,6 +1,7 @@
 #Lendo a Tabela de Transectos
 #Instalando o Pacote para ler arquivos do excel
 library(readxl)
+library(lubridate)
 #Definindo o diretorio de trabalho
 setwd("N:\\MA - Meio Ambiente\\MANEJO DA FAUNA\\Planilhas\\Transecto")
 #Lendo as abas como tabelas separadas
@@ -13,19 +14,19 @@ dados<-merge(Transectos,Registros,by.x="Transecto", by.y="Transecto")
 dadosT<-subset(dados,Data>"2018-10-01")
 
 #Identificando os meses dos transectos
-mes<- strftime(dadosT$Data, "%Y-%m")
+mes<-month(dadosT$Data,label = TRUE, abbr = TRUE)
+
+#Identificando os anos para os transectos
+ano<-year(dadosT$Data)
 
 #Agredados os dados por transecto
-DadosMes<-aggregate(dadosT$Quantidade,by=list(dadosT$UnidadeAmostral,mes,dadosT$Especie),FUN="sum")
+DadosMes<-aggregate(dadosT$Quantidade,by=list(dadosT$UnidadeAmostral,mes,ano,dadosT$Especie),FUN="sum")
 
 #Tirando a média por mês
-media<-aggregate(DadosMes$x,by=list(DadosMes$Group.3,DadosMes$Group.2),FUN="mean")
+media<-aggregate(DadosMes$x,by=list(DadosMes$Group.3,DadosMes$Group.2,DadosMes$Group.4),FUN="mean")
 
-#Identificando o fator ano
-library(tidyr)
-media2<-separate(data=media,col=Group.2,into=c("Ano","Mes"),sep="-")
-media<-cbind(media2,media$Group.2)
-names(media)<-c("SP","Ano","Mes","QTD","Data")
+names(media)<-c("Ano","Mes","SP","QTD")
+
 
 #Carregando pacote para fazer os gráficos
 library("ggplot2")
@@ -33,50 +34,55 @@ library("ggplot2")
 ##Gráfico Patagioenas picazuro
 #Selecionando a espécie
 d<-media[media$SP=="PP",]
-g1<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g1<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Patagioenas picazuro")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
 ##Gráfico Vanelus chilensis
 #Selecionando a espécie
 d<-media[media$SP=="VC",]
-g2<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g2<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Vanelus chilensis")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
 ##Gráfico Coragyps atratus
 #Selecionando a espécie
 d<-media[media$SP=="CA",]
-g3<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g3<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Coragyps atratus")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
 ##Gráfico Caracara plancus
 #Selecionando a espécie
 d<-media[media$SP=="CP",]
-g4<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g4<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Caracara plancus")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
 #Gráfico Sirigma sybilatrix
 #Selecionando a espécie
 d<-media[media$SP=="SS",]
-g5<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g5<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Sirigma sybilatrix")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
@@ -84,30 +90,33 @@ theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 #Gráfico Sirigma sybilatrix
 #Selecionando a espécie
 d<-media[media$SP=="TC",]
-g6<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g6<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Theristicus caudatus")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
 #Gráfico Athene cunicularia
 #Selecionando a espécie
 d<-media[media$SP=="AC",]
-g7<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g7<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Athene cunicularia")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
 #Gráfico Xolmis cinereus
 #Selecionando a espécie
 d<-media[media$SP=="XC",]
-g8<-ggplot(data=d,aes(x=Data, y=QTD, fill=Ano))+
+g8<-ggplot(data=d,aes(x=reorder(Mes,Ano), y=QTD, fill=as.factor(Ano), ))+
 geom_bar(stat="identity")+
-scale_x_discrete("Mês",labels=c("O","N","D","J","M","A","M","J","J","A","S"))+
+scale_x_discrete("Mês")+
 scale_y_continuous("Quantidade")+
+scale_fill_discrete(name ="Ano")+
 ggtitle("Xolmis cinereus")+
 theme(plot.title=element_text(face="bold.italic",hjust = 0.5))
 
