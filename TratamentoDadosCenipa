@@ -1,0 +1,30 @@
+#Lendo os dados de colisoes
+library(readxl)
+#Lendo as abas como tabelas separadas
+colisoes<-data.frame(read_excel("N:\\MA - Meio Ambiente\\MANEJO DA FAUNA\\Planilhas\\Colisões\\ColisoesBruto.xlsx", sheet="Colisões"))
+#Separando as espécies
+esp<-colisoes$EspecieTamanho
+library("stringr")
+k <- str_extract_all(esp, "\\([^()]+\\)")
+library(stringi)
+Esp<- as.data.frame(t(stri_list2matrix(k)))
+Esp<-apply(Esp ,2 , function(y) gsub("[()]", "",y))
+Esp<-apply(Esp ,2 , function(y) gsub("[ ]", "-",y))
+dados<-data.frame(cbind(colisoes,Esp))
+#Adicionando as abreviações
+AB<-data.frame(read_excel("N:\\MA - Meio Ambiente\\MANEJO DA FAUNA\\Planilhas\\Colisões\\RefAnalise\\Abreviacoes.xlsx", sheet="AB"))
+dados<-merge(dados,AB,by.x="V1", by.y="Especie",all.x=TRUE)
+#selecionando os dados de colisoes
+colisoes<-subset(dados, TipoDeReporte == "colisão")
+colisoes<-subset(dados, ICAO == "BSB" | ICAO =="SBBR")
+library("writexl")
+write_xlsx(dados,"N:\\MA - Meio Ambiente\\MANEJO DA FAUNA\\Planilhas\\Colisões\\ColisoesTratadas.xlsx")
+write_xlsx(colisoes,"N:\\MA - Meio Ambiente\\MANEJO DA FAUNA\\Planilhas\\Colisões\\ColisoesBSB.xlsx")
+
+
+
+#Verificando as espécies registradas para o Brasil(Utilizado para verificar se novas especies foram inseridas na base)
+##val<-c(as.character(dados$V1),as.character(dados$V2),as.character(dados$V3),as.character(dados$V4),as.character(dados$V5),as.character(dados$V6),as.character(dados$V7),as.character(dados$V8))
+##c<-sort(unique(val))
+##library("xlsx")
+##write.xlsx(c,"N:\\MA - Meio Ambiente\\MANEJO DA FAUNA\\Planilhas\\Colisões\\Esp.xlsx")
